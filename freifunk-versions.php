@@ -114,10 +114,3 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
     // $outstr .= '<pre>'.print_r($manifest, true).'</pre>';
     return $outstr;
 }
-
-register_uninstall_hook( __FILE__, 'ff_hh_uninstall_hook' );
-function ff_hh_uninstall_hook() {
-    delete_option( 'ff_hh_manifest' );
-}
-
-
