@@ -3,7 +3,7 @@
 Plugin Name: Freifunk Hamburg Firmware List Shortcode
 Plugin URI: http://mschuette.name/
 Description: Defines shortcodes to display Freifunk Hamburg Firmware versions
-Version: 0.2
+Version: 0.2a
 Author: Martin Schuette
 Author URI: http://mschuette.name/
 Licence: 2-clause BSD
