@@ -10,3 +10,15 @@ Input data is read from http://gw09.hamburg.freifunk.net/stable/sysupgrade/manif
 Output looks like this:
 
 ![shortcode output example](http://mschuette.name/wp/wp-upload/freifunk_versions.png)
+
+Arguments
+---------
+An optional argument `grep` allows you show a subset of hardware versions,
+Example:
+
+```
+    TP-Link Firmware: [ff_hh_versions grep="tp-link"]
+
+    Ubiquiti Firmware: [ff_hh_versions grep="ubiquiti"]
+```
+

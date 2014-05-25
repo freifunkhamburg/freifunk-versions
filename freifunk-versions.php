@@ -71,25 +71,41 @@ if ( ! shortcode_exists( 'ff_hh_versions' ) ) {
 }
 // Example:
 // [ff_hh_versions]
+// [ff_hh_versions grep="ubiquiti"]
 function ff_hh_shortcode_versions( $atts, $content, $name ) {
     $manifest = ff_hh_getmanifest(FF_HH_STABLE_BASEDIR);
 
     $outstr = "<div class=\"ff $name\">";
     $outstr .= '<table><tr><th>Modell</th><th>Erstinstallation</th><th>Aktualisierung</th></tr>';
 
+    # optionally filter output by given substring
+    if (is_array($atts)
+        && array_key_exists('grep', $atts)
+        && !empty($atts['grep'])) {
+        $grep = $atts['grep'];
+    } else {
+        $grep = false;
+    }
+
     foreach ($manifest as $hw => $versions) {
+        // filter
+        if ($grep && (false === strpos($hw, $grep))) {
+            continue;
+        }
         // beautify HW model names
         if (!strncmp($hw, 'tp-link', 7)) {
+            if ($grep) $hw = str_replace($grep, '', $hw);
             $hw = strtoupper($hw);
             $hw = str_replace('-', ' ', $hw);
             $hw = str_replace('TP LINK TL ', 'TP-Link TL-', $hw);
         } elseif (!strncmp($hw, 'ubiquiti', 8)) {
+            if ($grep) $hw = str_replace($grep, '', $hw);
             $hw = str_replace('ubiquiti-bullet-m', 'ubiquiti-bullet-m / nanostation-loco-m', $hw);
             $hw = str_replace('-m', ' M2', $hw);
             $hw = str_replace('-', ' ', $hw);
             $hw = ucwords($hw);
         }
-        $outstr .= sprintf('<tr><td>%s</td>', $hw);
+        $outstr .= sprintf("\n<tr><td>%s</td>", $hw);
 
         // factory versions
         $hw_ver_links = array();
