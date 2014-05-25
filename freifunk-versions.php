@@ -3,7 +3,7 @@
 Plugin Name: Freifunk Hamburg Firmware List Shortcode
 Plugin URI: http://mschuette.name/
 Description: Defines shortcodes to display Freifunk Hamburg Firmware versions
-Version: 0.2
+Version: 0.2a
 Author: Martin Schuette
 Author URI: http://mschuette.name/
 Licence: 2-clause BSD
@@ -84,6 +84,8 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
             $hw = str_replace('-', ' ', $hw);
             $hw = str_replace('TP LINK TL ', 'TP-Link TL-', $hw);
         } elseif (!strncmp($hw, 'ubiquiti', 8)) {
+            $hw = str_replace('ubiquiti-bullet-m', 'ubiquiti-bullet-m / nanostation-loco-m', $hw);
+            $hw = str_replace('-m', ' M2', $hw);
             $hw = str_replace('-', ' ', $hw);
             $hw = ucwords($hw);
         }
