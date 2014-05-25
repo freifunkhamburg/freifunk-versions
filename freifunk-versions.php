@@ -100,7 +100,7 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
             $hw = str_replace('TP LINK TL ', 'TP-Link TL-', $hw);
         } elseif (!strncmp($hw, 'ubiquiti', 8)) {
             if ($grep) $hw = str_replace($grep, '', $hw);
-            $hw = str_replace('ubiquiti-bullet-m', 'ubiquiti-bullet-m / nanostation-loco-m', $hw);
+            $hw = str_replace('bullet-m', 'bullet-m / nanostation-loco-m', $hw);
             $hw = str_replace('-m', ' M2', $hw);
             $hw = str_replace('-', ' ', $hw);
             $hw = ucwords($hw);
