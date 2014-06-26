@@ -15,9 +15,11 @@ define('FF_HH_CACHETIME', 15);
 /* gets metadata from URL, handles caching */
 function ff_hh_getmanifest ($basedir) {
     // Caching
-    if ( false === ( $manifest = get_transient( "ff_hh_manifest" ) ) ) {
-        $manifest = array();
-        $input  = wp_remote_retrieve_body( wp_remote_get($basedir . 'sysupgrade/manifest') );
+    if ( WP_DEBUG || ( false === ( $manifest = get_transient( "ff_hh_manifest" ) ) ) ) {
+        $manifest      = array();
+        $url           = $basedir . 'sysupgrade/manifest';
+        $http_response = wp_remote_get( $url );  // TODO: error handling
+        $input         = wp_remote_retrieve_body( $http_response );
         foreach ( explode("\n", $input) as $line ) {
             $ret = sscanf($line, '%s %s %s %s', $hw, $sw_ver, $hash, $filename);
             if ($ret === 4) {
@@ -104,6 +106,10 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
             $hw = str_replace('-m', ' M2', $hw);
             $hw = str_replace('-', ' ', $hw);
             $hw = ucwords($hw);
+        } elseif (!strncmp($hw, 'd-link', 6)) {
+            if ($grep) $hw = str_replace($grep, '', $hw);
+            $hw = str_replace('-', ' ', $hw);
+            $hw = str_replace('d link dir ', 'D-Link DIR-', $hw);
         }
         $outstr .= sprintf("\n<tr><td>%s</td>", $hw);
 
