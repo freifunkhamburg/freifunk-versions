@@ -1,6 +1,8 @@
 freifunk-versions
 =================
 
+[![Build Status](https://travis-ci.org/freifunkhamburg/freifunk-versions.svg?branch=master)](https://travis-ci.org/freifunkhamburg/freifunk-versions)
+
 Wordpress plugin to render latest (Hamburg-flavoured)
 [gluon firmware](https://github.com/freifunkhamburg/gluon) version table.
 
