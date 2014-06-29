@@ -3,7 +3,7 @@
 Plugin Name: Freifunk Hamburg Firmware List Shortcode
 Plugin URI: http://mschuette.name/
 Description: Defines shortcodes to display Freifunk Hamburg Firmware versions
-Version: 0.4
+Version: 0.4dev
 Author: Martin Schuette
 Author URI: http://mschuette.name/
 Licence: 2-clause BSD
@@ -94,23 +94,7 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
         if ($grep && (false === strpos($hw, $grep))) {
             continue;
         }
-        // beautify HW model names
-        if (!strncmp($hw, 'tp-link', 7)) {
-            if ($grep) $hw = str_replace($grep, '', $hw);
-            $hw = strtoupper($hw);
-            $hw = str_replace('-', ' ', $hw);
-            $hw = str_replace('TP LINK TL ', 'TP-Link TL-', $hw);
-        } elseif (!strncmp($hw, 'ubiquiti', 8)) {
-            if ($grep) $hw = str_replace($grep, '', $hw);
-            $hw = str_replace('bullet-m', 'bullet-m / nanostation-loco-m', $hw);
-            $hw = str_replace('-m', ' M2', $hw);
-            $hw = str_replace('-', ' ', $hw);
-            $hw = ucwords($hw);
-        } elseif (!strncmp($hw, 'd-link', 6)) {
-            if ($grep) $hw = str_replace($grep, '', $hw);
-            $hw = str_replace('-', ' ', $hw);
-            $hw = str_replace('d link dir ', 'D-Link DIR-', $hw);
-        }
+        $hw = ff_hh_beautify_hw_name($hw, $grep);
         $outstr .= sprintf("\n<tr><td>%s</td>", $hw);
 
         // factory versions
@@ -138,3 +122,30 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
     // $outstr .= '<pre>'.print_r($manifest, true).'</pre>';
     return $outstr;
 }
+
+// some crude rules to add capitalization and whitespace to the
+// hardware model name.
+// set $discard_vendor to strip the vendor name
+// (used for single-vendor lists, e.g. $discard_vendor = 'tp-link')
+function ff_hh_beautify_hw_name($hw, $discard_vendor = "") {
+    if (!strncmp($hw, 'tp-link', 7)) {
+        if ($discard_vendor) $hw = str_replace($discard_vendor, '', $hw);
+        $hw = strtoupper($hw);
+        $hw = str_replace('-', ' ', $hw);
+        $hw = str_replace('TP LINK ', 'TP-Link ', $hw);
+        $hw = str_replace(' TL ', ' TL-', $hw);
+    } elseif (!strncmp($hw, 'ubiquiti', 8)) {
+        if ($discard_vendor) $hw = str_replace($discard_vendor, '', $hw);
+        $hw = str_replace('bullet-m', 'bullet-m / nanostation-loco-m', $hw);
+        $hw = str_replace('-m', ' M2', $hw);
+        $hw = str_replace('-', ' ', $hw);
+        $hw = ucwords($hw);
+    } elseif (!strncmp($hw, 'd-link', 6)) {
+        if ($discard_vendor) $hw = str_replace($discard_vendor, '', $hw);
+        $hw = str_replace('-', ' ', $hw);
+        $hw = str_replace('d link ', 'D-Link ', $hw);
+        $hw = str_replace(' dir ', ' DIR-', $hw);
+    }
+    return $hw;
+}
+
