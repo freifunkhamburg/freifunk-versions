@@ -151,6 +151,11 @@ function ff_hh_beautify_hw_name( $hw, $discard_vendor = '' ) {
 		$hw = str_replace( '-', ' ', $hw );
 		$hw = str_replace( 'd link ', 'D-Link ', $hw );
 		$hw = str_replace( ' dir ', ' DIR-', $hw );
+	} elseif ( ! strncmp( $hw, 'linksys', 7 ) ) {
+		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+		$hw = str_replace( '-', ' ', $hw );
+		$hw = str_replace( 'linksys ', 'Linksys ', $hw );
+		$hw = str_replace( ' wrt', ' WRT-', $hw );
 	}
 	return $hw;
 }
