@@ -17,7 +17,7 @@ function ff_hh_getmanifest( $basedir ) {
 	// Caching
 	if ( WP_DEBUG || ( false === ( $manifest = get_transient( 'ff_hh_manifest' ) ) ) ) {
 		$manifest      = array();
-		$url           = $basedir . 'sysupgrade/manifest';
+		$url           = $basedir . 'sysupgrade/stable.manifest';
 		$http_response = wp_remote_get( $url );  // TODO: error handling
 		$input         = wp_remote_retrieve_body( $http_response );
 		foreach ( explode( "\n", $input ) as $line ) {
@@ -44,7 +44,7 @@ function ff_hh_getlatest( $basedir ) {
 	// Caching
 	if ( false === ( $sw_ver = get_transient( 'ff_hh_latestversion' ) ) ) {
 		$sw_ver = 'unknown';
-		$input  = wp_remote_retrieve_body( wp_remote_get( $basedir . 'sysupgrade/manifest' ) );
+		$input  = wp_remote_retrieve_body( wp_remote_get( $basedir . 'sysupgrade/stable.manifest' ) );
 		foreach ( explode( "\n", $input ) as $line ) {
 			$ret = sscanf( $line, '%s %s %s %s', $hw, $sw_ver, $hash, $filename );
 			if ( $ret === 4 ) {
