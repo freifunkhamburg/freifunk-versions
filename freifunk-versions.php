@@ -148,19 +148,22 @@ function ff_hh_beautify_hw_name( $hw, $discard_vendor = '' ) {
 		$hw = ucwords( $hw );
 	} elseif ( ! strncmp( $hw, 'd-link', 6 ) ) {
 		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+		$hw = strtoupper( $hw );
 		$hw = str_replace( '-', ' ', $hw );
-		$hw = str_replace( 'd link ', 'D-Link ', $hw );
-		$hw = str_replace( ' dir ', ' DIR-', $hw );
+		$hw = str_replace( 'D LINK ', 'D-Link ', $hw );
+		$hw = str_replace( ' DIR ', ' DIR-', $hw );
 	} elseif ( ! strncmp( $hw, 'linksys', 7 ) ) {
 		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+		$hw = strtoupper( $hw );
 		$hw = str_replace( '-', ' ', $hw );
-		$hw = str_replace( 'linksys ', 'Linksys ', $hw );
-		$hw = str_replace( ' wrt', ' WRT-', $hw );
+		$hw = str_replace( 'LINKSYS', 'Linksys ', $hw );
+		$hw = str_replace( ' WRT', ' WRT-', $hw );
 	} elseif ( ! strncmp( $hw, 'buffalo', 7 ) ) {
 		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-		$hw = str_replace( 'buffalo', 'Buffalo', $hw );
-		$hw = str_replace( 'hp-ag300h-wzr-600dhp', 'HP-AG300H & WZR-600DHP', $hw );
-		$hw = str_replace( '-wzr', 'WZR', $hw );
+		$hw = strtoupper( $hw );
+		$hw = str_replace('BUFFALO', 'Buffalo', $hw );
+		$hw = str_replace( 'HP-AG300H-WZR-600DHP', 'HP-AG300H & WZR-600DHP', $hw );
+		$hw = str_replace( '-WZR', 'WZR', $hw );
 	}
 	return $hw;
 }
