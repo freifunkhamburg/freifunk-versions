@@ -158,8 +158,9 @@ function ff_hh_beautify_hw_name( $hw, $discard_vendor = '' ) {
 		$hw = str_replace( ' wrt', ' WRT-', $hw );
 	} elseif ( ! strncmp( $hw, 'buffalo', 7 ) ) {
 		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-		$hw = str_replace( 'wzr-', 'WZR-', $hw );
-		$hw = str_replace( '-', ' ', $hw );
+		$hw = str_replace( 'buffalo', 'Buffalo', $hw );
+		$hw = str_replace( 'hp-ag300h-wzr-600dhp', 'HP-AG300H & WZR-600DHP', $hw );
+		$hw = str_replace( '-wzr', 'WZR', $hw );
 	}
 	return $hw;
 }
