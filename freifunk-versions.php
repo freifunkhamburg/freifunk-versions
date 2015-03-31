@@ -78,7 +78,7 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 	$manifest = ff_hh_getmanifest( FF_HH_STABLE_BASEDIR );
 
 	$outstr  = "<div class=\"ff $name\">";
-	$outstr .= '<table><tr><th>Modell</th><th>Erstinstallation</th><th>Aktualisierung</th></tr>';
+	$outstr .= '<table><tr><th>Modell</th><th>Erstinstallation</th><th>Aktualisierung</th><th>Preissuche</th></tr>';
 
 	# optionally filter output by given substring
 	if ( is_array( $atts )
@@ -119,6 +119,10 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 			);
 		}
 		$outstr .= '<td>Hardware Version ' . join( ', ', $hw_ver_links ) . '</td>';
+
+		// link to Geizhals
+
+		$outstr .= sprintf( "\n<tr><td><a href=\"http://geizhals.de/?fs=%s\" target=\"_blank\">Suchen</a></td>", $hw );
 
 		$outstr .= '</tr>';
 	}
