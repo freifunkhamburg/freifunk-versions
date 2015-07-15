@@ -101,6 +101,10 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 		$hw_ver_links = array();
 		foreach ( $versions as $hw_ver => $filename ) {
 			$filename = str_replace( '-sysupgrade', '', $filename );
+			if (strpos($filename,'netgear') !== false) {
+				$filename = str_replace( '.bin', '.img', $filename );
+                                $filename = str_replace( '.tar', '.img', $filename );
+			}
 			$hw_ver_links[] = sprintf(
 				'<a href="%s%s">%s.x</a>',
 				FF_HH_STABLE_BASEDIR.'factory/',
