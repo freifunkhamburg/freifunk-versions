@@ -11,8 +11,8 @@ class SimpleTests extends WP_UnitTestCase {
 			array( 'ubiquiti-unifi',        'ubiquiti', 'Unifi' ),
 			array( 'ubiquiti-bullet-m',     '',         'Ubiquiti Bullet M2 / Nanostation Loco M2' ),
 			array( 'ubiquiti-bullet-m',     'ubiquiti', 'Bullet M2 / Nanostation Loco M2' ),
-			array( 'd-link-dir-615-rev-e1', '',         'D-Link DIR-615 rev e1' ),
-			array( 'd-link-dir-615-rev-e1', 'd-link',   'DIR-615 rev e1' ),
+			array( 'd-link-dir-615-rev-e1', '',         'D-Link DIR-615 REV E1' ),
+			array( 'd-link-dir-615-rev-e1', 'd-link',   'DIR-615 REV E1' ),
 		);
 		foreach ( $cmplist as $item ) {
 			$expect = $item[2];
