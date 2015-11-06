@@ -146,7 +146,7 @@ function ff_hh_beautify_hw_name( $hw, $discard_vendor = '' ) {
 		$hw = str_replace( ' TL ', ' TL-', $hw );
 	} elseif ( ! strncmp( $hw, 'ubiquiti', 8 ) ) {
 		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-		$hw = str_replace( 'bullet-m', 'bullet-m / nanostation-loco-m', $hw );
+		$hw = str_replace( 'bullet-m', 'bullet-m', $hw );
 		$hw = str_replace( '-m', ' M2', $hw );
 		$hw = str_replace( '-', ' ', $hw );
 		$hw = ucwords( $hw );
