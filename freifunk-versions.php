@@ -111,7 +111,7 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 				$filename, $hw_ver
 			);
 		}
-		$outstr .= '<td>Hardware Version ' . join( ', ', $hw_ver_links ) . '</td>';
+		$outstr .= '<td>Hardware Ver. ' . join( ', ', $hw_ver_links ) . '</td>';
 
 		// sysupgrade versions
 		$hw_ver_links = array();
@@ -122,7 +122,7 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 				$filename, $hw_ver
 			);
 		}
-		$outstr .= '<td>Hardware Version ' . join( ', ', $hw_ver_links ) . '</td>';
+		$outstr .= '<td>Hardware Ver. ' . join( ', ', $hw_ver_links ) . '</td>';
 
 		$outstr .= '</tr>';
 	}
@@ -142,7 +142,6 @@ function ff_hh_beautify_hw_name( $hw, $discard_vendor = '' ) {
 		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
 		$hw = strtoupper( $hw );
 		$hw = str_replace( '-', ' ', $hw );
-		$hw = str_replace( 'TP LINK ', 'TP-Link ', $hw );
 		$hw = str_replace( ' TL ', ' TL-', $hw );
 	} elseif ( ! strncmp( $hw, 'ubiquiti', 8 ) ) {
 		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
@@ -154,24 +153,20 @@ function ff_hh_beautify_hw_name( $hw, $discard_vendor = '' ) {
 		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
 		$hw = strtoupper( $hw );
 		$hw = str_replace( '-', ' ', $hw );
-		$hw = str_replace( 'D LINK ', 'D-Link ', $hw );
 		$hw = str_replace( ' DIR ', ' DIR-', $hw );
 	} elseif ( ! strncmp( $hw, 'linksys', 7 ) ) {
 		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
 		$hw = strtoupper( $hw );
 		$hw = str_replace( '-', ' ', $hw );
-		$hw = str_replace( 'LINKSYS', 'Linksys ', $hw );
 		$hw = str_replace( ' WRT', ' WRT-', $hw );
 	} elseif ( ! strncmp( $hw, 'buffalo', 7 ) ) {
 		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
 		$hw = strtoupper( $hw );
-		$hw = str_replace('BUFFALO', 'Buffalo', $hw );
 		$hw = str_replace( 'HP-AG300H-WZR-600DHP', 'HP-AG300H & WZR-600DHP', $hw );
 		$hw = str_replace( '-WZR', 'WZR', $hw );
         } elseif ( ! strncmp( $hw, 'netgear', 7 ) ) {
                 if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
                 $hw = strtoupper( $hw );
-                $hw = str_replace('NETGEAR', 'Netgear', $hw );
                 $hw = str_replace( '-', '', $hw );
         } elseif ( ! strncmp( $hw, 'allnet', 6 ) ) {
                 if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
@@ -180,9 +175,17 @@ function ff_hh_beautify_hw_name( $hw, $discard_vendor = '' ) {
         } elseif ( ! strncmp( $hw, 'gl-inet', 7 ) ) {
                 if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
                 $hw = strtoupper( $hw );
-                $hw = str_replace('GL-INET', 'Gl.iNet', $hw );
+                $hw = str_replace( '-', '', $hw );
+        } elseif ( ! strncmp( $hw, 'onion-omega', 11 ) ) {
+                if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+	} elseif ( ! strncmp( $hw, 'alfa', 4 ) ) {
+                if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+                $hw = strtoupper( $hw );
+                $hw = str_replace( '-', '', $hw );
+	} elseif ( ! strncmp( $hw, 'wd', 2 ) ) {
+                if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+                $hw = strtoupper( $hw );
                 $hw = str_replace( '-', '', $hw );
 	}
 	return $hw;
 }
-
