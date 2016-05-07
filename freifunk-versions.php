@@ -186,6 +186,16 @@ function ff_hh_beautify_hw_name( $hw, $discard_vendor = '' ) {
                 if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
                 $hw = strtoupper( $hw );
                 $hw = str_replace( '-', '', $hw );
+        } elseif ( ! strncmp( $hw, '8devices', 8 ) ) {
+                if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+                $hw = strtoupper( $hw );
+                $hw = str_replace( 'CARAMBOLA2-BOARD', 'Carambola 2', $hw );
+                $hw = str_replace( '-', '', $hw );
+        } elseif ( ! strncmp( $hw, 'meraki', 6 ) ) {
+                if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );         
+                $hw = strtoupper( $hw );
+                $hw = str_replace( 'meraki', '', $hw );
+                $hw = str_replace( '-', '', $hw );
 	}
 	return $hw;
 }
