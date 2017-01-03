@@ -9,7 +9,7 @@ Author URI: http://mschuette.name/
 Licence: 2-clause BSD
 */
 
-define( 'FF_HH_STABLE_BASEDIR', 'http://updates.hamburg.freifunk.net/stable/' );
+define( 'FF_HH_STABLE_BASEDIR', 'https://updates.hamburg.freifunk.net/stable/' );
 define( 'FF_HH_CACHETIME', 1 );
 
 /* gets metadata from URL, handles caching */
