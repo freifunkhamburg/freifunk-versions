@@ -146,7 +146,6 @@ function ff_hh_beautify_hw_name( $hw, $discard_vendor = '' ) {
 	} elseif ( ! strncmp( $hw, 'ubiquiti', 8 ) ) {
 		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
 		$hw = str_replace( 'bullet-m', 'bullet-m', $hw );
-		$hw = str_replace( '-m', ' M2', $hw );
 		$hw = str_replace( '-', ' ', $hw );
 		$hw = ucwords( $hw );
 	} elseif ( ! strncmp( $hw, 'd-link', 6 ) ) {
@@ -195,6 +194,11 @@ function ff_hh_beautify_hw_name( $hw, $discard_vendor = '' ) {
                 if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );         
                 $hw = strtoupper( $hw );
                 $hw = str_replace( 'meraki', '', $hw );
+                $hw = str_replace( '-', '', $hw );
+        } elseif ( ! strncmp( $hw, 'openmesh', 8 ) ) {
+                if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+                $hw = strtoupper( $hw );
+                $hw = str_replace( 'openmesh', '', $hw );
                 $hw = str_replace( '-', '', $hw );
 	}
 	return $hw;
