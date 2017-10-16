@@ -100,6 +100,10 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 		// factory versions
 		$hw_ver_links = array();
 		foreach ( $versions as $hw_ver => $filename ) {
+			if ( strpos( $hw, 'Unifi Ac Pro' ) || strpos( $hw, 'Unifi Ac Lite' ) ) {
+				continue;
+			}
+
 			$filename = str_replace( '-sysupgrade', '', $filename );
 			if (strpos($filename,'netgear') !== false) {
 				$filename = str_replace( '.bin', '.img', $filename );
@@ -111,7 +115,11 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 				$filename, $hw_ver
 			);
 		}
-		$outstr .= '<td>Hardware Ver. ' . join( ', ', $hw_ver_links ) . '</td>';
+		if ( count($hw_ver_links) > 0) {
+			$outstr .= '<td>Hardware Ver. ' . join( ', ', $hw_ver_links ) . '</td>';
+		} else {
+			$outstr .= '<td><i>Benutze das Image</br>zur Aktualisierung</i></td>';
+		}
 
 		// sysupgrade versions
 		$hw_ver_links = array();
