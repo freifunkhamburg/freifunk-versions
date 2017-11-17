@@ -7,7 +7,8 @@ Wordpress plugin to render latest (Hamburg-flavoured)
 [gluon firmware](https://github.com/freifunkhamburg/gluon) version table.
 
 Provides shortcode `[ff_hh_versions]` to display table.
-Input data is read from http://updates.hamburg.freifunk.net/stable/sysupgrade/manifest
+Input data is read from i.e.
+https://updates.hamburg.freifunk.net/ffhh/stable/sysupgrade/stable.manifest
 
 Output looks like this:
 
@@ -15,7 +16,26 @@ Output looks like this:
 
 Arguments
 ---------
-An optional argument `grep` allows you show a subset of hardware versions,
+The optional argument `domain` (default: `ffhh`) allows you to choose the
+firmware's domain.
+
+Example:
+
+```
+    Hamburg-Süd Firmware: [ff_hh_versions domain="ffhh-sued"]
+```
+
+The optional argument `branch` (default: `stable`) allows you to choose the
+firmware's branch.
+
+Example:
+
+```
+    Experimental Firmware: [ff_hh_versions branch="experimental"]
+```
+
+The optional argument `grep` allows you show a subset of hardware versions.
+
 Example:
 
 ```
@@ -23,4 +43,3 @@ Example:
 
     Ubiquiti Firmware: [ff_hh_versions grep="ubiquiti"]
 ```
-

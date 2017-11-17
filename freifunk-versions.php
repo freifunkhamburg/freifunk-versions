@@ -3,23 +3,24 @@
 Plugin Name: Freifunk Hamburg Firmware List Shortcode
 Plugin URI: http://mschuette.name/
 Description: Defines shortcodes to display Freifunk Hamburg Firmware versions
-Version: 0.4dev
+Version: 0.5dev
 Author: Martin Schuette
 Author URI: http://mschuette.name/
 Licence: 2-clause BSD
 */
 
-define( 'FF_HH_STABLE_BASEDIR', 'https://updates.hamburg.freifunk.net/stable/' );
+define( 'FF_HH_UPDATES_URL', 'https://updates.hamburg.freifunk.net/' );
 define( 'FF_HH_CACHETIME', 1 );
 
 /* gets metadata from URL, handles caching */
-function ff_hh_getmanifest( $basedir ) {
+function ff_hh_getmanifest( $branch_url, $domain, $branch ) {
 	// Caching
-	if ( WP_DEBUG || ( false === ( $manifest = get_transient( 'ff_hh_manifest' ) ) ) ) {
-		$manifest      = array();
-		$url           = $basedir . 'sysupgrade/stable.manifest';
+	$cache_key = 'ff_hh_manifest_' . $domain . '_' . $branch;
+	if ( WP_DEBUG || ( false === ( $manifest = get_transient( $cache_key ) ) ) ) {
+		$manifest = array();
+		$url = $branch_url . '/sysupgrade/' . $branch . '.manifest';
 		$http_response = wp_remote_get( $url );  // TODO: error handling
-		$input         = wp_remote_retrieve_body( $http_response );
+		$input = wp_remote_retrieve_body( $http_response );
 		foreach ( explode( "\n", $input ) as $line ) {
 			$ret = sscanf( $line, '%s %s %s %s', $hw, $sw_ver, $hash, $filename );
 			if ( $ret === 4 ) {
@@ -34,23 +35,25 @@ function ff_hh_getmanifest( $basedir ) {
 		}
 
 		$cachetime = FF_HH_CACHETIME * MINUTE_IN_SECONDS;
-		set_transient( 'ff_hh_manifest', $manifest, $cachetime );
+		set_transient( $cache_key, $manifest, $cachetime );
 	}
 	return $manifest;
 }
 
 /* gets latest version from first manifest line */
-function ff_hh_getlatest( $basedir ) {
+function ff_hh_getlatest( $branch_url, $domain, $branch ) {
 	// Caching
-	if ( false === ( $sw_ver = get_transient( 'ff_hh_latestversion' ) ) ) {
+	$cache_key = 'ff_hh_latestversion_' . $domain . '_' . $branch;
+	if ( false === ( $sw_ver = get_transient( $cache_key ) ) ) {
 		$sw_ver = 'unknown';
-		$input  = wp_remote_retrieve_body( wp_remote_get( $basedir . 'sysupgrade/stable.manifest' ) );
+		$url = $branch_url . '/sysupgrade/' . $branch . '.manifest';
+		$input  = wp_remote_retrieve_body( wp_remote_get( $url ) );
 		foreach ( explode( "\n", $input ) as $line ) {
 			$ret = sscanf( $line, '%s %s %s %s', $hw, $sw_ver, $hash, $filename );
 			if ( $ret === 4 ) {
 				// break processing on first matching line
 				$cachetime = FF_HH_CACHETIME * MINUTE_IN_SECONDS;
-				set_transient( 'ff_hh_latestversion', $sw_ver, $cachetime );
+				set_transient( $cache_key, $sw_ver, $cachetime );
 				break;
 			}
 		}
@@ -63,31 +66,52 @@ if ( ! shortcode_exists( 'ff_hh_latestversion' ) ) {
 }
 // Example:
 // [ff_hh_latestversion]
+// [ff_hh_latestversion domain="ffhh-sued" branch="experimental"]
 function ff_hh_shortcode_latestversion( $atts, $content, $name ) {
-	$sw_ver = ff_hh_getlatest( FF_HH_STABLE_BASEDIR );
+	$domain = 'ffhh';
+	$branch = 'stable';
+	if ( is_array( $atts ) ) {
+		if ( array_key_exists( 'domain', $atts ) && ! empty( $atts['domain'] ) ) {
+			$domain = $atts['domain'];
+		}
+		if ( array_key_exists( 'branch', $atts ) && ! empty( $atts['branch'] ) ) {
+			$branch = $atts['branch'];
+		}
+	}
+
+	$branch_url = FF_HH_UPDATES_URL . $domain . '/' . $branch;
+	$sw_ver = ff_hh_getlatest( $branch_url, $domain, $branch );
 	$outstr = "<span class=\"ff $name\">$sw_ver</span>";
 	return $outstr;
 }
+
 if ( ! shortcode_exists( 'ff_hh_versions' ) ) {
 	add_shortcode( 'ff_hh_versions', 'ff_hh_shortcode_versions' );
 }
 // Example:
 // [ff_hh_versions]
-// [ff_hh_versions grep="ubiquiti"]
+// [ff_hh_versions domain="ffhh-sued" branch="experimental" grep="ubiquiti"]
 function ff_hh_shortcode_versions( $atts, $content, $name ) {
-	$manifest = ff_hh_getmanifest( FF_HH_STABLE_BASEDIR );
+	$domain = 'ffhh';
+	$branch = 'stable';
+	$grep = false;
+	if ( is_array( $atts ) ) {
+		if ( array_key_exists( 'domain', $atts ) && ! empty( $atts['domain'] ) ) {
+			$domain = $atts['domain'];
+		}
+		if ( array_key_exists( 'branch', $atts ) && ! empty( $atts['branch'] ) ) {
+			$branch = $atts['branch'];
+		}
+		if ( array_key_exists( 'grep', $atts ) && ! empty( $atts['grep'] ) ) {
+			$grep = $atts['grep'];
+		}
+	}
+
+	$branch_url = FF_HH_UPDATES_URL . $domain . '/' . $branch;
+	$manifest = ff_hh_getmanifest( $branch_url, $domain, $branch );
 
 	$outstr  = "<div class=\"ff $name\">";
 	$outstr .= '<table><tr><th>Modell</th><th>Erstinstallation</th><th>Aktualisierung</th></tr>';
-
-	# optionally filter output by given substring
-	if ( is_array( $atts )
-		&& array_key_exists( 'grep', $atts )
-		&& ! empty( $atts['grep'] ) ) {
-		$grep = $atts['grep'];
-	} else {
-		$grep = false;
-	}
 
 	foreach ( $manifest as $hw => $versions ) {
 		// filter
@@ -107,12 +131,13 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 			$filename = str_replace( '-sysupgrade', '', $filename );
 			if (strpos($filename,'netgear') !== false) {
 				$filename = str_replace( '.bin', '.img', $filename );
-                                $filename = str_replace( '.tar', '.img', $filename );
+				$filename = str_replace( '.tar', '.img', $filename );
 			}
 			$hw_ver_links[] = sprintf(
 				'<a href="%s%s">%s.x</a>',
-				FF_HH_STABLE_BASEDIR.'factory/',
-				$filename, $hw_ver
+				$branch_url . '/factory/',
+				$filename,
+				$hw_ver
 			);
 		}
 		if ( count($hw_ver_links) > 0) {
@@ -126,8 +151,9 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 		foreach ( $versions as $hw_ver => $filename ) {
 			$hw_ver_links[] = sprintf(
 				'<a href="%s%s">%s.x</a>',
-				FF_HH_STABLE_BASEDIR.'sysupgrade/',
-				$filename, $hw_ver
+				$branch_url . '/sysupgrade/',
+				$filename,
+				$hw_ver
 			);
 		}
 		$outstr .= '<td>Hardware Ver. ' . join( ', ', $hw_ver_links ) . '</td>';
@@ -171,43 +197,43 @@ function ff_hh_beautify_hw_name( $hw, $discard_vendor = '' ) {
 		$hw = strtoupper( $hw );
 		$hw = str_replace( 'HP-AG300H-WZR-600DHP', 'HP-AG300H & WZR-600DHP', $hw );
 		$hw = str_replace( '-WZR', 'WZR', $hw );
-        } elseif ( ! strncmp( $hw, 'netgear', 7 ) ) {
-                if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-                $hw = strtoupper( $hw );
-                $hw = str_replace( '-', '', $hw );
-        } elseif ( ! strncmp( $hw, 'allnet', 6 ) ) {
-                if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-                $hw = strtoupper( $hw );
-                $hw = str_replace( '-', '', $hw );
-        } elseif ( ! strncmp( $hw, 'gl-inet', 7 ) ) {
-                if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-                $hw = strtoupper( $hw );
-                $hw = str_replace( '-', '', $hw );
-        } elseif ( ! strncmp( $hw, 'onion-omega', 11 ) ) {
-                if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+	} elseif ( ! strncmp( $hw, 'netgear', 7 ) ) {
+		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+		$hw = strtoupper( $hw );
+		$hw = str_replace( '-', '', $hw );
+	} elseif ( ! strncmp( $hw, 'allnet', 6 ) ) {
+		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+		$hw = strtoupper( $hw );
+		$hw = str_replace( '-', '', $hw );
+	} elseif ( ! strncmp( $hw, 'gl-inet', 7 ) ) {
+		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+		$hw = strtoupper( $hw );
+		$hw = str_replace( '-', '', $hw );
+	} elseif ( ! strncmp( $hw, 'onion-omega', 11 ) ) {
+		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
 	} elseif ( ! strncmp( $hw, 'alfa', 4 ) ) {
-                if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-                $hw = strtoupper( $hw );
-                $hw = str_replace( '-', '', $hw );
+		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+		$hw = strtoupper( $hw );
+		$hw = str_replace( '-', '', $hw );
 	} elseif ( ! strncmp( $hw, 'wd', 2 ) ) {
-                if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-                $hw = strtoupper( $hw );
-                $hw = str_replace( '-', '', $hw );
-        } elseif ( ! strncmp( $hw, '8devices', 8 ) ) {
-                if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-                $hw = strtoupper( $hw );
-                $hw = str_replace( 'CARAMBOLA2-BOARD', 'Carambola 2', $hw );
-                $hw = str_replace( '-', '', $hw );
-        } elseif ( ! strncmp( $hw, 'meraki', 6 ) ) {
-                if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );         
-                $hw = strtoupper( $hw );
-                $hw = str_replace( 'meraki', '', $hw );
-                $hw = str_replace( '-', '', $hw );
-        } elseif ( ! strncmp( $hw, 'openmesh', 8 ) ) {
-                if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-                $hw = strtoupper( $hw );
-                $hw = str_replace( 'openmesh', '', $hw );
-                $hw = str_replace( '-', '', $hw );
+		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+		$hw = strtoupper( $hw );
+		$hw = str_replace( '-', '', $hw );
+	} elseif ( ! strncmp( $hw, '8devices', 8 ) ) {
+		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+		$hw = strtoupper( $hw );
+		$hw = str_replace( 'CARAMBOLA2-BOARD', 'Carambola 2', $hw );
+		$hw = str_replace( '-', '', $hw );
+	} elseif ( ! strncmp( $hw, 'meraki', 6 ) ) {
+		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+		$hw = strtoupper( $hw );
+		$hw = str_replace( 'meraki', '', $hw );
+		$hw = str_replace( '-', '', $hw );
+	} elseif ( ! strncmp( $hw, 'openmesh', 8 ) ) {
+		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+		$hw = strtoupper( $hw );
+		$hw = str_replace( 'openmesh', '', $hw );
+		$hw = str_replace( '-', '', $hw );
 	}
 	return $hw;
 }
