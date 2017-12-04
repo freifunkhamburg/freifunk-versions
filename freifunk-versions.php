@@ -95,6 +95,7 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 	$domain = 'ffhh';
 	$branch = 'stable';
 	$grep = false;
+	$filter = false;
 	if ( is_array( $atts ) ) {
 		if ( array_key_exists( 'domain', $atts ) && ! empty( $atts['domain'] ) ) {
 			$domain = $atts['domain'];
@@ -105,6 +106,9 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 		if ( array_key_exists( 'grep', $atts ) && ! empty( $atts['grep'] ) ) {
 			$grep = $atts['grep'];
 		}
+		if ( array_key_exists( 'filter', $atts ) && ! empty( $atts['filter'] ) ) {
+			$filter = explode ( ',', $atts['filter'] );
+		}
 	}
 
 	$branch_url = FF_HH_UPDATES_URL . $domain . '/' . $branch;
@@ -114,10 +118,24 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 	$outstr .= '<table><tr><th>Modell</th><th>Erstinstallation</th><th>Aktualisierung</th></tr>';
 
 	foreach ( $manifest as $hw => $versions ) {
-		// filter
+		// select some models
 		if ( $grep && ( false === strpos( $hw, $grep ) ) ) {
 			continue;
 		}
+		// filter others
+		if ( $filter ) {
+			$filtered = false;
+			foreach ( $filter as $flt ) {
+				if ( strpos ( $hw, $flt ) !== false ) {
+					$filtered = true;
+					break;
+				}
+			}
+			if ( $filtered ) {
+				continue;
+			}
+		}
+
 		$hw = ff_hh_beautify_hw_name( $hw, $grep );
 		$outstr .= sprintf( "\n<tr><td>%s</td>", $hw );
 
