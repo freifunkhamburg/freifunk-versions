@@ -117,6 +117,7 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 	$outstr  = "<div class=\"ff $name\">";
 	$outstr .= '<table><tr><th>Modell</th><th>Erstinstallation</th><th>Aktualisierung</th></tr>';
 
+	ksort($manifest);
 	foreach ( $manifest as $hw => $versions ) {
 		// select some models
 		if ( $grep && ( false === strpos( $hw, $grep ) ) ) {
@@ -199,6 +200,12 @@ function ff_hh_beautify_hw_name( $hw, $discard_vendor = '' ) {
 		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
 		$hw = str_replace( 'bullet-m', 'bullet-m', $hw );
 		$hw = str_replace( '-', ' ', $hw );
+		$hw = ucwords( $hw );
+	} elseif ( ! strncmp( $hw, 'ubnt', 4 ) ) {
+		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
+		$hw = str_replace( 'erx', 'ER-X', $hw );
+		$hw = str_replace( 'sfp', 'SFP', $hw );
+		$hw = trim( $hw, ' -' );
 		$hw = ucwords( $hw );
 	} elseif ( ! strncmp( $hw, 'd-link', 6 ) ) {
 		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
