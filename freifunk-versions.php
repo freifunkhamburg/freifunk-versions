@@ -230,7 +230,7 @@ function ff_hh_beautify_hw_name( $hw, $discard_vendor = '' ) {
 		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
 		$hw = strtoupper( $hw );
 		$hw = str_replace( '-', '', $hw );
-	} elseif ( ! strncmp( $hw, 'gl-inet', 7 ) ) {
+	} elseif ( ! strncmp( $hw, 'gl-', 3 ) ) {
 		if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
 		$hw = strtoupper( $hw );
 		$hw = str_replace( '-', '', $hw );
