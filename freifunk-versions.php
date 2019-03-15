@@ -3,7 +3,6 @@
 Plugin Name: Freifunk Hamburg Firmware List Shortcode
 Plugin URI: http://mschuette.name/
 Description: Defines shortcodes to display Freifunk Hamburg Firmware versions
-Version: 0.5dev
 Author: Martin Schuette
 Author URI: http://mschuette.name/
 Licence: 2-clause BSD
@@ -91,11 +90,11 @@ if ( ! shortcode_exists( 'ff_hh_versions' ) ) {
 }
 // Example:
 // [ff_hh_versions]
-// [ff_hh_versions domain="ffhh-sued" branch="experimental" grep="ubiquiti"]
+// [ff_hh_versions domain="ffhh-sued" branch="experimental" prefix="ubiquiti"]
 function ff_hh_shortcode_versions( $atts, $content, $name ) {
 	$domain = 'ffhh';
 	$branch = 'stable';
-	$grep = false;
+	$prefix = false;
 	$filter = false;
 	if ( is_array( $atts ) ) {
 		if ( array_key_exists( 'domain', $atts ) && ! empty( $atts['domain'] ) ) {
@@ -104,8 +103,8 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 		if ( array_key_exists( 'branch', $atts ) && ! empty( $atts['branch'] ) ) {
 			$branch = $atts['branch'];
 		}
-		if ( array_key_exists( 'grep', $atts ) && ! empty( $atts['grep'] ) ) {
-			$grep = $atts['grep'];
+		if ( array_key_exists( 'prefix', $atts ) && ! empty( $atts['prefix'] ) ) {
+			$prefix = explode ( ',', $atts['prefix'] );
 		}
 		if ( array_key_exists( 'filter', $atts ) && ! empty( $atts['filter'] ) ) {
 			$filter = explode ( ',', $atts['filter'] );
@@ -122,8 +121,17 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 	ksort($manifest);
 	foreach ( $manifest as $hw => $versions ) {
 		// select some models
-		if ( $grep && ( false === strpos( $hw, $grep ) ) ) {
-			continue;
+		if ( $prefix ) {
+			$matched = false;
+			foreach ( $prefix as $pfx ) {
+				if ( strpos ( $hw, $pfx ) === 0 ) {
+					$matched = $pfx;
+					break;
+				}
+			}
+			if ( $matched === false ) {
+				continue;
+			}
 		}
 		// filter others
 		if ( $filter ) {
@@ -139,7 +147,7 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 			}
 		}
 
-		$hw = ff_hh_beautify_hw_name( $hw, $grep );
+		$hw = ff_hh_beautify_hw_name( $hw, $matched );
 		$outstr .= sprintf( "\n<tr><td>%s</td>", $hw );
 
 		// factory versions
