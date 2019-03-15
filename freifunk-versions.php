@@ -80,6 +80,7 @@ function ff_hh_shortcode_latestversion( $atts, $content, $name ) {
 	}
 
 	$branch_url = FF_HH_UPDATES_URL . $domain . '/' . $branch;
+	if ( $domain === 'multi' ) { $branch_url = $branch_url . '/images'; }
 	$sw_ver = ff_hh_getlatest( $branch_url, $domain, $branch );
 	$outstr = "<span class=\"ff $name\">$sw_ver</span>";
 	return $outstr;
@@ -112,6 +113,7 @@ function ff_hh_shortcode_versions( $atts, $content, $name ) {
 	}
 
 	$branch_url = FF_HH_UPDATES_URL . $domain . '/' . $branch;
+	if ( $domain === 'multi' ) { $branch_url = $branch_url . '/images'; }
 	$manifest = ff_hh_getmanifest( $branch_url, $domain, $branch );
 
 	$outstr  = "<div class=\"ff $name\">";
