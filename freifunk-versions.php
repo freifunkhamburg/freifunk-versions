@@ -161,7 +161,7 @@ function firmware_versions( $atts, $content, $name ) {
 
     ksort($versions);
     foreach ( $versions as $hw => $hw_versions ) {
-        // $hw = ff_hh_beautify_hw_name( $hw, $matched );
+        $hw = firmware_beautify_hw_name( $hw, $prefix );
         $outstr .= sprintf( "\n<tr><td>%s</td>", $hw );
 
         // factory images
@@ -203,80 +203,43 @@ function firmware_versions( $atts, $content, $name ) {
     return $outstr;
 }
 
-// some crude rules to add capitalization and whitespace to the
-// hardware model name.
-// set $discard_vendor to strip the vendor name
-// (used for single-vendor lists, e.g. $discard_vendor = 'tp-link' )
-function ff_hh_beautify_hw_name( $hw, $discard_vendor = '' ) {
-    if ( ! strncmp( $hw, 'tp-link', 7 ) ) {
-        if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-        $hw = strtoupper( $hw );
-        $hw = str_replace( '-', ' ', $hw );
-        $hw = str_replace( ' TL ', ' TL-', $hw );
-    } elseif ( ! strncmp( $hw, 'ubiquiti', 8 ) ) {
-        if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-        $hw = str_replace( 'bullet-m', 'bullet-m', $hw );
-        $hw = str_replace( '-', ' ', $hw );
-        $hw = ucwords( $hw );
-    } elseif ( ! strncmp( $hw, 'ubnt', 4 ) ) {
-        if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-        $hw = str_replace( 'erx', 'ER-X', $hw );
-        $hw = str_replace( 'sfp', 'SFP', $hw );
-        $hw = trim( $hw, ' -' );
-        $hw = ucwords( $hw );
-    } elseif ( ! strncmp( $hw, 'd-link', 6 ) ) {
-        if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-        $hw = strtoupper( $hw );
-        $hw = str_replace( '-', ' ', $hw );
-        $hw = str_replace( ' DIR ', ' DIR-', $hw );
-    } elseif ( ! strncmp( $hw, 'linksys', 7 ) ) {
-        if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-        $hw = strtoupper( $hw );
-        $hw = str_replace( '-', ' ', $hw );
-        $hw = str_replace( ' WRT', ' WRT-', $hw );
-    } elseif ( ! strncmp( $hw, 'buffalo', 7 ) ) {
-        if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-        $hw = strtoupper( $hw );
-        $hw = str_replace( 'HP-AG300H-WZR-600DHP', 'HP-AG300H & WZR-600DHP', $hw );
-        $hw = str_replace( '-WZR', 'WZR', $hw );
-    } elseif ( ! strncmp( $hw, 'netgear', 7 ) ) {
-        if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-        $hw = strtoupper( $hw );
-        $hw = str_replace( '-', '', $hw );
-    } elseif ( ! strncmp( $hw, 'allnet', 6 ) ) {
-        if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-        $hw = strtoupper( $hw );
-        $hw = str_replace( '-', '', $hw );
-    } elseif ( ! strncmp( $hw, 'gl-', 3 ) ) {
-        if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-        $hw = strtoupper( $hw );
-        $hw = str_replace( '-', '', $hw );
-    } elseif ( ! strncmp( $hw, 'onion-omega', 11 ) ) {
-        if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-    } elseif ( ! strncmp( $hw, 'alfa', 4 ) ) {
-        if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-        $hw = strtoupper( $hw );
-        $hw = str_replace( '-', '', $hw );
-    } elseif ( ! strncmp( $hw, 'wd', 2 ) ) {
-        if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-        $hw = strtoupper( $hw );
-        $hw = str_replace( '-', '', $hw );
-    } elseif ( ! strncmp( $hw, '8devices', 8 ) ) {
-        if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-        $hw = strtoupper( $hw );
-        $hw = str_replace( 'CARAMBOLA2-BOARD', 'Carambola 2', $hw );
-        $hw = str_replace( '-', '', $hw );
-    } elseif ( ! strncmp( $hw, 'meraki', 6 ) ) {
-        if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-        $hw = strtoupper( $hw );
-        $hw = str_replace( 'meraki', '', $hw );
-        $hw = str_replace( '-', '', $hw );
-    } elseif ( ! strncmp( $hw, 'openmesh', 8 ) ) {
-        if ( $discard_vendor ) $hw = str_replace( $discard_vendor, '', $hw );
-        $hw = strtoupper( $hw );
-        $hw = str_replace( 'openmesh', '', $hw );
-        $hw = str_replace( '-', '', $hw );
+// Add capitalization and whitespace to the hardware model name.
+function firmware_beautify_hw_name( $hw, $prefix ) {
+    $vendor = '';
+    if ( $prefix ) {
+        $vendor = $prefix[0];
     }
+
+    if ( $vendor === '8devices' ) {
+        $hw = str_replace( 'carambola2-board', 'carambola 2', $hw );
+        $hw = ucwords( $hw );
+    } elseif ( $vendor === 'buffalo' ) {
+        $hw = str_replace( 'hp-ag300h-wzr-600dhp', 'hp-ag300h & wzr-600dhp', $hw );
+        $hw = strtoupper( $hw );
+    } elseif ( $vendor === 'd-link' ) {
+        $hw = str_replace( '-', ' ', $hw );
+        $hw = str_replace( 'dir ', 'dir-', $hw );
+        $hw = strtoupper( $hw );
+    } elseif ( $vendor === 'onion' ) {
+        $hw = ucwords( $hw );
+    } elseif ( $vendor === 'tp-link' ) {
+        $hw = str_replace( 'n-nd', 'n/nd', $hw );
+        $hw = str_replace( '-', ' ', $hw );
+        $hw = str_replace( 'tl ', 'tl-', $hw );
+        $hw = strtoupper( $hw );
+        $hw = str_replace( 'ARCHER', 'Archer', $hw );
+    } elseif ( $vendor === 'ubiquiti' ) {
+        $hw = str_replace( '-', ' ', $hw );
+        $hw = ucwords( $hw );
+        $hw = str_replace( 'Ac', 'AC', $hw );
+        $hw = str_replace( 'Ap', 'AP', $hw );
+        $hw = str_replace( 'Erx', 'ER-X', $hw );
+        $hw = str_replace( 'Sfp', 'SFP', $hw );
+        $hw = str_replace( 'Xw', 'XW', $hw );
+    } else {
+        $hw = strtoupper( $hw );
+    }
+
     return $hw;
 }
 
